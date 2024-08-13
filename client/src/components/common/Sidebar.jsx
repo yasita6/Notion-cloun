@@ -40,10 +40,16 @@ const Sidebar = () => {
     getMemos();
   }, [dispatch]);
 
-  useEffect(() => { 
-    const activeIndex = memos.findIndex((e) => e._id === memoId);
-    setActiveIndex(activeIndex);
-  }, [navigate]);
+
+  useEffect(() => {
+    const activeItem = memos.findIndex((e) => e.id === memoId);
+    //📝が１つ以上あり、かつmemoIdがundefinedじゃない時
+    if (memos.length > 0 && memoId === undefined) {
+      // navigate(`/memo/${memos[0].id}`);
+    }
+    setActiveIndex(activeItem);
+  }, [memos, memoId, navigate]);
+
 
   const addMemo = async () => {
     try {

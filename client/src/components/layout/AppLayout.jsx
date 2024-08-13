@@ -1,9 +1,9 @@
-import { Container, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import notionLogo from "../../assets/images/notion-logo.png";
 import authUtils from "../../utils/authUtils";
+import Loading from '../common/Loading';
 import Sidebar from "../common/Sidebar";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/features/userSlice";
@@ -11,7 +11,7 @@ import { setUser } from "../../redux/features/userSlice";
 const AppLayout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [loading, setLoading] = useState(true); // loadingを定義
   useEffect(() => {
     //JWTを持っているのかを確認する
     const checkAuth = async () => {
@@ -22,20 +22,44 @@ const AppLayout = () => {
       } else {
         //ユーザーを保存する
         dispatch(setUser(user));
+        setLoading(false); // 認証が完了したらsetLoading(false)を呼び出す
       }
     };
     checkAuth();
-  }, [navigate]);
-  return (
-    <div>
-      <Box sx={{ display: "flex" }}>
-        <Sidebar />
-        <Box sx={{ flexGrow: 1, p: 1, width: "max-content" }}>
-          <Outlet />
-        </Box>
+  }, [dispatch, navigate]);
+
+  return loading ? (
+    <>
+      <Loading fullHeight />
+    </>
+  ) : (
+    <Box
+      sx={{
+        display: "flex",
+      }}
+    >
+      <Sidebar />
+      <Box
+        sx={{
+          flexGrow: 1,
+          p: 1,
+          width: "max-content",
+        }}
+      >
+        <Outlet />
       </Box>
-    </div>
+    </Box>
   );
+  // return (
+  //   <div>
+  //     <Box sx={{ display: "flex" }}>
+  //       <Sidebar />
+  //       <Box sx={{ flexGrow: 1, p: 1, width: "max-content" }}>
+  //         <Outlet />
+  //       </Box>
+  //     </Box>
+  //   </div>
+  // );
 };
 
 export default AppLayout;
